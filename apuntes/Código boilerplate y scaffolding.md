@@ -36,7 +36,7 @@ Porque el costo no es el tiempo de teclear: es la **fragmentación del
 razonamiento**. El desarrollador alterna entre construir reglas de negocio —donde
 está el valor— y transcribir estructura —donde no lo hay—, y ese cambio de
 tarea interrumpe el flujo de resolución de problemas complejos. Es el punto que
-desarrolla [[Ma 2024 - Breaking the Flow: A Study of Interruptions/Ma et al. - 2024 - Breaking the Flow A Study of Interruptions During Software Engineering Activities|Ma et al. (2024)]], de Duke University y Vanderbilt University.
+desarrolla [[Ma 2024 - Breaking the Flow - A Study of Interruptions/Ma et al. - 2024 - Breaking the Flow A Study of Interruptions During Software Engineering Activities|Ma et al. (2024)]], de Duke University y Vanderbilt University.
 
 ## La evidencia empírica
 
