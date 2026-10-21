@@ -1,0 +1,29 @@
+================================================================================
+EVIDENCIA: smoke test end-to-end de la API
+Script: smoke-api.sh  (reproduce: bash smoke-api.sh)
+Base URL: http://localhost:8090/api
+Fecha: 2026-10-20T22:18:24-05:00
+================================================================================
+
+### 0. Clean user
+### 1. Register (HTTP 201)
+  register: HTTP 201
+### 2. Password assigned by the verification email: H0UnkSiay3
+### 3. Mark email verified (business routes require the 'verified' middleware)
+### 4. Login -> token
+  token: 3|MlO66nEGbjEY8FyeZV...
+### 5. GET /user
+  GET user: HTTP 200
+### 6. POST /shopping-lists
+  created list id=4
+### 7. POST nested item (requires done + creator_email)
+  POST item: HTTP 201
+### 8. POST /products
+  POST product: HTTP 201
+### 9. GET /units
+  GET units: HTTP 200
+### 10. PUT /shopping-lists/{id}
+  PUT list: HTTP 200
+### 11. DELETE list
+  DELETE list: HTTP 200
+### Done. Raw outputs in /tmp/opencode/smoke/

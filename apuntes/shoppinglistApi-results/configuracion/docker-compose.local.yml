@@ -1,0 +1,32 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ../.env:/var/www/html/.env
+    ports:
+      - "8090:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      - MYSQL_DATABASE=shoppinglist
+      - MYSQL_ROOT_PASSWORD=shoppinglist_root
+      - MYSQL_PASSWORD=9ffe1b01f6dea4aa3c183b5c
+      - MYSQL_USER=shoppinglist
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  dbdata:

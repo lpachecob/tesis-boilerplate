@@ -1,0 +1,112 @@
+================================================================================
+EVIDENCIA: metricas SonarQube (duplicacion literal, calidad)
+Servidor: http://localhost:9000  proyecto key: shoppinglistapi
+Version SonarQube: "version":"26.10.0.133078"
+Fecha: 2026-10-20T22:17:44-05:00
+================================================================================
+
+--- Metricas globales (api/measures/component) ---
+{
+    "component": {
+        "key": "shoppinglistapi",
+        "name": "ShoppinglistApi",
+        "qualifier": "TRK",
+        "measures": [
+            {
+                "metric": "complexity",
+                "value": "232"
+            },
+            {
+                "metric": "reliability_rating",
+                "value": "1.0",
+                "bestValue": true
+            },
+            {
+                "metric": "duplicated_lines_density",
+                "value": "2.1",
+                "bestValue": false
+            },
+            {
+                "metric": "code_smells",
+                "value": "0",
+                "bestValue": true
+            },
+            {
+                "metric": "duplicated_lines",
+                "value": "76",
+                "bestValue": false
+            },
+            {
+                "metric": "security_rating",
+                "value": "1.0",
+                "bestValue": true
+            },
+            {
+                "metric": "comment_lines_density",
+                "value": "27.1",
+                "bestValue": false
+            },
+            {
+                "metric": "sqale_index",
+                "value": "0",
+                "bestValue": true
+            },
+            {
+                "metric": "sqale_rating",
+                "value": "1.0",
+                "bestValue": true
+            },
+            {
+                "metric": "bugs",
+                "value": "0",
+                "bestValue": true
+            },
+            {
+                "metric": "duplicated_blocks",
+                "value": "4",
+                "bestValue": false
+            },
+            {
+                "metric": "ncloc",
+                "value": "1737"
+            },
+            {
+                "metric": "files",
+                "value": "80"
+            },
+            {
+                "metric": "vulnerabilities",
+                "value": "0",
+                "bestValue": true
+            }
+        ]
+    }
+}
+
+--- Duplicacion por directorio (app/ y migrations) ---
+dir                                       dup_lines   density%    ncloc
+app                                               0        0.0     1281
+app/Console                                       0        0.0       16
+app/Exceptions                                    0        0.0       20
+app/Http                                          0        0.0      651
+app/Http/Controllers                              0        0.0      324
+app/Http/Controllers/Auth                         0        0.0      120
+app/Http/Middleware                               0        0.0       96
+app/Http/Requests                                 0        0.0      182
+app/Http/Requests/Auth                            0        0.0       34
+app/Http/Requests/Item                            0        0.0       36
+app/Http/Requests/Product                         0        0.0       42
+app/Http/Requests/ShoppingList                    0        0.0       53
+app/Http/Requests/User                            0        0.0       17
+app/Models                                        0        0.0      218
+app/Notifications                                 0        0.0       56
+app/Observers                                     0        0.0       39
+app/Policies                                      0        0.0      103
+app/Providers                                     0        0.0      178
+database/migrations                              76       11.0      425
+routes                                            0        0.0       31
+
+--- Archivos con duplicacion ---
+database/migrations/2016_06_01_000002_create_oauth_access_tokens_table.php | 10 | 1 | 26.3 | 23
+database/migrations/2020_09_21_155536_change_on_update_foreign_keys.php | 56 | 2 | 70.9 | 60
+database/migrations/2020_09_21_172341_drop_passport_tables.php | 10 | 1 | 13.2 | 57

@@ -1,0 +1,427 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-10-21T00:00:00.000Z",
+  "__export_source": "shoppinglistapi-pretest",
+  "resources": [
+    {
+      "_id": "env_shoppinglistapi_local",
+      "_type": "environment",
+      "parentId": null,
+      "name": "ShoppinglistApi — Local",
+      "data": {
+        "baseUrl": "http://localhost:8090/api",
+        "token": "",
+        "email": "tesis@example.com",
+        "password": "password123",
+        "listId": "",
+        "itemId": "",
+        "productId": ""
+      },
+      "dataPropertyOrder": {
+        "&": ["baseUrl", "token", "email", "password", "listId", "itemId", "productId"]
+      }
+    },
+    {
+      "_id": "wrk_shoppinglistapi",
+      "_type": "workspace",
+      "name": "ShoppinglistApi Pre-test",
+      "description": "API Laravel 7 (ammannbe/ShoppinglistApi) usada como pre-test de tesis.\n\nRASTRILLOS DEL REPO:\n1. La password del registro NO sirve para login (VerifyEmail.php:21 reescribe la password con Str::random(10) y la manda por email). Con MAIL_MAILER=log, leela del log.\n2. Las rutas de negocio exigen email verificado (middleware 'verified'). Setear email_verified_at en DB.\n3. POST items exige 'done' y 'creator_email' siempre.\n\nEjecuta register -> lee password del log -> marca email_verified_at -> login.",
+      "scope": "collection"
+    },
+    {
+      "_id": "fld_health",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "0. Health",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_teapot",
+      "_type": "request",
+      "parentId": "fld_health",
+      "name": "Teapot (sin auth, 418)",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/im-a-teapot",
+      "headers": [{ "name": "Accept", "value": "application/json" }],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "1. Auth",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_register",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Registrar usuario",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/auth/register",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Tesis User\",\n  \"email\": \"{{ _.email }}\",\n  \"password\": \"{{ _.password }}\",\n  \"password_confirmation\": \"{{ _.password }}\"\n}"
+      },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login (obtener token)",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/auth/token",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ _.email }}\",\n  \"password\": \"{{ _.password }}\",\n  \"device_name\": \"insomnia\"\n}"
+      },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_logout",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Cerrar sesion",
+      "method": "DELETE",
+      "url": "{{ _.baseUrl }}/auth/token",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_forgot",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Recuperar password",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/auth/password/email",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": { "mimeType": "application/json", "text": "{\n  \"email\": \"{{ _.email }}\"\n}" },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "fld_user",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "2. Usuario",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_user_show",
+      "_type": "request",
+      "parentId": "fld_user",
+      "name": "Ver perfil",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/user",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_user_update",
+      "_type": "request",
+      "parentId": "fld_user",
+      "name": "Actualizar perfil",
+      "method": "PATCH",
+      "url": "{{ _.baseUrl }}/user",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": { "mimeType": "application/json", "text": "{\n  \"name\": \"Nombre Editado\"\n}" },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "fld_lists",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "3. Shopping Lists",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_list_index",
+      "_type": "request",
+      "parentId": "fld_lists",
+      "name": "Listar listas",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/shopping-lists",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_list_store",
+      "_type": "request",
+      "parentId": "fld_lists",
+      "name": "Crear lista",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/shopping-lists",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": { "mimeType": "application/json", "text": "{\n  \"name\": \"Lista Tesis\"\n}" },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_list_show",
+      "_type": "request",
+      "parentId": "fld_lists",
+      "name": "Ver lista",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/shopping-lists/{{ _.listId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_list_update",
+      "_type": "request",
+      "parentId": "fld_lists",
+      "name": "Actualizar lista",
+      "method": "PUT",
+      "url": "{{ _.baseUrl }}/shopping-lists/{{ _.listId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": { "mimeType": "application/json", "text": "{\n  \"name\": \"Lista Editada\"\n}" },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_list_destroy",
+      "_type": "request",
+      "parentId": "fld_lists",
+      "name": "Borrar lista",
+      "method": "DELETE",
+      "url": "{{ _.baseUrl }}/shopping-lists/{{ _.listId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "fld_items",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "4. Items",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_item_index",
+      "_type": "request",
+      "parentId": "fld_items",
+      "name": "Items de una lista",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/shopping-lists/{{ _.listId }}/items",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_item_store",
+      "_type": "request",
+      "parentId": "fld_items",
+      "name": "Crear item (requiere done + creator_email)",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/shopping-lists/{{ _.listId }}/items",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"product_name\": \"Leche\",\n  \"amount\": 2,\n  \"unit_name\": \"litros\",\n  \"done\": false,\n  \"creator_email\": \"{{ _.email }}\"\n}"
+      },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_item_show",
+      "_type": "request",
+      "parentId": "fld_items",
+      "name": "Ver item",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/items/{{ _.itemId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_item_update",
+      "_type": "request",
+      "parentId": "fld_items",
+      "name": "Actualizar item",
+      "method": "PUT",
+      "url": "{{ _.baseUrl }}/items/{{ _.itemId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"product_name\": \"Leche\",\n  \"amount\": 3,\n  \"unit_name\": \"litros\",\n  \"done\": true,\n  \"creator_email\": \"{{ _.email }}\"\n}"
+      },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_item_destroy",
+      "_type": "request",
+      "parentId": "fld_items",
+      "name": "Borrar item",
+      "method": "DELETE",
+      "url": "{{ _.baseUrl }}/items/{{ _.itemId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "fld_products",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "5. Products",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_product_index",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Listar productos",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/products",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_product_store",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Crear producto",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/products",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": { "mimeType": "application/json", "text": "{\n  \"name\": \"Leche Entera\"\n}" },
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_product_destroy",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Borrar producto",
+      "method": "DELETE",
+      "url": "{{ _.baseUrl }}/products/{{ _.productId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "fld_units",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "6. Units",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_unit_index",
+      "_type": "request",
+      "parentId": "fld_units",
+      "name": "Listar unidades",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/units",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "fld_shares",
+      "_type": "request_group",
+      "parentId": "wrk_shoppinglistapi",
+      "name": "7. Shares",
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_share_index",
+      "_type": "request",
+      "parentId": "fld_shares",
+      "name": "Ver compartidos",
+      "method": "GET",
+      "url": "{{ _.baseUrl }}/shopping-lists/{{ _.listId }}/shares",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": {},
+      "environment": { "env_shoppinglistapi_local": true }
+    },
+    {
+      "_id": "req_share_store",
+      "_type": "request",
+      "parentId": "fld_shares",
+      "name": "Compartir lista",
+      "method": "POST",
+      "url": "{{ _.baseUrl }}/shopping-lists/{{ _.listId }}/shares",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "body": { "mimeType": "application/json", "text": "{\n  \"email\": \"otro@example.com\"\n}" },
+      "environment": { "env_shoppinglistapi_local": true }
+    }
+  ]
+}

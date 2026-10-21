@@ -1,0 +1,35 @@
+================================================================================
+EVIDENCIA: similitud estructural global (sim-estructural.py)
+Reproduce: python3 sim-estructural.py   (desde la raiz del repo)
+Fecha: 2026-10-20T22:17:29-05:00
+================================================================================
+
+=== CONTROLADORES de recurso (similitud estructural) ===
+  ItemController.php             vs ProductController.php          -> 78.7%
+  ItemController.php             vs ShoppingListController.php     -> 76.3%
+  ItemController.php             vs ShoppingListUserController.php -> 31.0%
+  ItemController.php             vs UnitController.php             -> 20.6%
+  ProductController.php          vs ShoppingListController.php     -> 91.0%
+  ProductController.php          vs ShoppingListUserController.php -> 30.2%
+  ProductController.php          vs UnitController.php             -> 24.0%
+  ShoppingListController.php     vs ShoppingListUserController.php -> 26.4%
+  ShoppingListController.php     vs UnitController.php             -> 23.8%
+  ShoppingListUserController.php vs UnitController.php             -> 16.5%
+
+  PROMEDIO: 41.9%
+
+=== FormRequests: pares con similitud >= 80% ===
+  Auth/Login.php               vs Auth/Token.php               -> 94.4%
+  Auth/Login.php               vs Item/Store.php               -> 83.3%
+  Auth/Login.php               vs Item/Update.php              -> 83.3%
+  Auth/Token.php               vs Item/Store.php               -> 83.3%
+  Auth/Token.php               vs Item/Update.php              -> 83.3%
+  Item/Store.php               vs Item/Update.php              -> 95.9%
+  Product/Store.php            vs Product/Update.php           -> 93.1%
+  Product/Store.php            vs ShoppingList/Store.php       -> 95.8%
+  Product/Store.php            vs ShoppingList/Update.php      -> 88.8%
+  Product/Update.php           vs ShoppingList/Store.php       -> 88.8%
+  Product/Update.php           vs ShoppingList/Update.php      -> 95.0%
+  ShoppingList/Store.php       vs ShoppingList/Update.php      -> 92.6%
+
+  12 de 45 pares posibles con similitud >= 80%

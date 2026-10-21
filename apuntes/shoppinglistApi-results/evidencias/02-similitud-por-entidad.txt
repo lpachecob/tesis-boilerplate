@@ -1,0 +1,59 @@
+================================================================================
+EVIDENCIA: similitud estructural por entidad (sim-por-entidad.py)
+Reproduce: python3 sim-por-entidad.py   (desde la raiz del repo)
+Fecha: 2026-10-20T22:17:29-05:00
+================================================================================
+
+==============================================================================
+LOC 'code' REAL POR ARTEFACTO Y ENTIDAD
+==============================================================================
+Artefacto                 Item       Product  ShoppingList    Total
+-------------------------------------------------------------------
+Modelo                      42            52            61      155
+Controlador                 35            33            33      101
+RequestStore                19            21            19       59
+RequestUpdate               19            23            21       63
+Migracion                   26            22            22       70
+-------------------------------------------------------------------
+TOTAL/entidad              141           151           156      448
+
+==============================================================================
+SIMILITUD ESTRUCTURAL ENTRE ENTIDADES (mismo artefacto, distinta entidad)
+==============================================================================
+
+--- Controlador ---
+  Item           vs Product        -> 78.7%
+  Item           vs ShoppingList   -> 76.3%
+  Product        vs ShoppingList   -> 91.0%
+  PROMEDIO Controlador: 82.0%
+
+--- Modelo ---
+  Item           vs Product        -> 9.2%
+  Item           vs ShoppingList   -> 34.7%
+  Product        vs ShoppingList   -> 49.0%
+  PROMEDIO Modelo: 31.0%
+
+--- RequestStore ---
+  Item           vs Product        -> 61.2%
+  Item           vs ShoppingList   -> 62.8%
+  Product        vs ShoppingList   -> 95.8%
+  PROMEDIO RequestStore: 73.3%
+
+--- RequestUpdate ---
+  Item           vs Product        -> 54.5%
+  Item           vs ShoppingList   -> 56.7%
+  Product        vs ShoppingList   -> 95.0%
+  PROMEDIO RequestUpdate: 68.7%
+
+--- Migracion ---
+  Item           vs Product        -> 77.5%
+  Item           vs ShoppingList   -> 75.3%
+  Product        vs ShoppingList   -> 98.3%
+  PROMEDIO Migracion: 83.7%
+
+==============================================================================
+SIMILITUD A NIVEL MODULO (controlador+modelo+2 requests+migracion juntos)
+==============================================================================
+  modulo Item           vs Product        -> 59.5%
+  modulo Item           vs ShoppingList   -> 58.0%
+  modulo Product        vs ShoppingList   -> 78.3%

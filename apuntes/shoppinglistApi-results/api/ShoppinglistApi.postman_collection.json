@@ -1,0 +1,419 @@
+{
+  "info": {
+    "_postman_id": "b7e3c1a2-4f5d-4e8a-9c1b-shoppinglistapi-pretest",
+    "name": "ShoppinglistApi — Pre-test Tesis",
+    "description": "Coleccion completa para la API Laravel 7 (ammannbe/ShoppinglistApi) usada como pre-test de tesis.\n\nIMPORTANTE — rastrillos del repo original:\n1. La password del registro NO sirve para login: el email de verificacion (VerifyEmail.php:21) REESCRIBE tu password con Str::random(10) y la envia por correo. Con MAIL_MAILER=log, leela del log.\n2. Las rutas de negocio exigen email verificado (middleware 'verified'). Hay que setear email_verified_at en la DB.\n3. POST items exige 'done' y 'creator_email' siempre.\n\nVariables de entorno: baseUrl (default http://localhost:8090/api), token (se setea tras Login), listId, itemId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8090/api" },
+    { "key": "token", "value": "" },
+    { "key": "listId", "value": "" },
+    { "key": "itemId", "value": "" },
+    { "key": "email", "value": "tesis@example.com" },
+    { "key": "password", "value": "password123" }
+  ],
+  "item": [
+    {
+      "name": "0. Health",
+      "item": [
+        {
+          "name": "Teapot (sin auth, 418)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/im-a-teapot", "host": ["{{baseUrl}}"], "path": ["im-a-teapot"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', function () { pm.response.to.have.status(201); });",
+                  "// La password real llega por email (bug del repo). Leela del log:",
+                  "// docker compose -f docker/docker-compose.local.yml exec -T app bash -c \"grep -oE 'Your password is: [A-Za-z0-9]{10}' storage/logs/laravel.log | tail -1\"",
+                  "console.log('Recuerda: marcar email_verified_at y usar la password del email.');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tesis User\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"password_confirmation\": \"{{password}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login (obtener token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', function () { pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "if (j.token) { pm.collectionVariables.set('token', j.token); console.log('Token guardado.'); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"device_name\": \"postman\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/token", "host": ["{{baseUrl}}"], "path": ["auth", "token"] }
+          }
+        },
+        {
+          "name": "Cerrar sesion (borrar token)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/token", "host": ["{{baseUrl}}"], "path": ["auth", "token"] }
+          }
+        },
+        {
+          "name": "Recuperar password (email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\"\n}" },
+            "url": { "raw": "{{baseUrl}}/auth/password/email", "host": ["{{baseUrl}}"], "path": ["auth", "password", "email"] }
+          }
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\",\n  \"token\": \"TOKEN_DEL_EMAIL\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/password/reset", "host": ["{{baseUrl}}"], "path": ["auth", "password", "reset"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Usuario",
+      "item": [
+        {
+          "name": "Ver perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/user", "host": ["{{baseUrl}}"], "path": ["user"] }
+          }
+        },
+        {
+          "name": "Actualizar perfil",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Nombre Editado\"\n}" },
+            "url": { "raw": "{{baseUrl}}/user", "host": ["{{baseUrl}}"], "path": ["user"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Shopping Lists",
+      "item": [
+        {
+          "name": "Listar listas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/shopping-lists", "host": ["{{baseUrl}}"], "path": ["shopping-lists"] }
+          }
+        },
+        {
+          "name": "Crear lista",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var j = pm.response.json();",
+                  "if (j.id) { pm.collectionVariables.set('listId', j.id); console.log('listId=' + j.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Lista Tesis\"\n}" },
+            "url": { "raw": "{{baseUrl}}/shopping-lists", "host": ["{{baseUrl}}"], "path": ["shopping-lists"] }
+          }
+        },
+        {
+          "name": "Ver lista",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/shopping-lists/{{listId}}", "host": ["{{baseUrl}}"], "path": ["shopping-lists", "{{listId}}"] }
+          }
+        },
+        {
+          "name": "Actualizar lista",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Lista Editada\"\n}" },
+            "url": { "raw": "{{baseUrl}}/shopping-lists/{{listId}}", "host": ["{{baseUrl}}"], "path": ["shopping-lists", "{{listId}}"] }
+          }
+        },
+        {
+          "name": "Borrar lista",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/shopping-lists/{{listId}}", "host": ["{{baseUrl}}"], "path": ["shopping-lists", "{{listId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Items",
+      "item": [
+        {
+          "name": "Items de una lista",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/shopping-lists/{{listId}}/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["shopping-lists", "{{listId}}", "items"]
+            }
+          }
+        },
+        {
+          "name": "Crear item (requiere done + creator_email)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var j = pm.response.json();",
+                  "if (j.id) { pm.collectionVariables.set('itemId', j.id); console.log('itemId=' + j.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_name\": \"Leche\",\n  \"amount\": 2,\n  \"unit_name\": \"litros\",\n  \"done\": false,\n  \"creator_email\": \"{{email}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shopping-lists/{{listId}}/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["shopping-lists", "{{listId}}", "items"]
+            }
+          }
+        },
+        {
+          "name": "Ver item",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/items/{{itemId}}", "host": ["{{baseUrl}}"], "path": ["items", "{{itemId}}"] }
+          }
+        },
+        {
+          "name": "Actualizar item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_name\": \"Leche\",\n  \"amount\": 3,\n  \"unit_name\": \"litros\",\n  \"done\": true,\n  \"creator_email\": \"{{email}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/items/{{itemId}}", "host": ["{{baseUrl}}"], "path": ["items", "{{itemId}}"] }
+          }
+        },
+        {
+          "name": "Borrar item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/items/{{itemId}}", "host": ["{{baseUrl}}"], "path": ["items", "{{itemId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Products",
+      "item": [
+        {
+          "name": "Listar productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          }
+        },
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Leche Entera\"\n}" },
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          }
+        },
+        {
+          "name": "Borrar producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Units",
+      "item": [
+        {
+          "name": "Listar unidades (solo lectura)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/units", "host": ["{{baseUrl}}"], "path": ["units"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Shares",
+      "item": [
+        {
+          "name": "Ver compartidos de una lista",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/shopping-lists/{{listId}}/shares",
+              "host": ["{{baseUrl}}"],
+              "path": ["shopping-lists", "{{listId}}", "shares"]
+            }
+          }
+        },
+        {
+          "name": "Compartir lista",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"otro@example.com\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/shopping-lists/{{listId}}/shares",
+              "host": ["{{baseUrl}}"],
+              "path": ["shopping-lists", "{{listId}}", "shares"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
