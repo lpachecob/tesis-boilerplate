@@ -1,0 +1,66 @@
+# OpenSpec configuration - tesis-boilerplate
+schema: spec-driven
+
+context: |
+  Project: tesis-boilerplate - a thesis writing vault (Markdown/Obsidian notes, PDF references, .docx deliverables).
+  Thesis subject: Boilerfree, a PHP 8 runtime-derived REST API framework; SOLUCION.md is design documentation, not code in this repo.
+  Actual repo stack: Markdown documents plus one Python 3 stdlib verification script; no application runtime or build system.
+  Structure: root thesis docs, apuntes/ notes, referencias/ bibliography, odd/tasks/, .atl/ registry, .obsidian/ config.
+  Conventions: single source of truth per concept (SOLUCION.md section map); bibliography entry text is authoritative for citation identity.
+  Format convention from prior sessions (verify before relying on it): APA 7 layout governs thesis documents; rules in apuntes/Guia-Normas-APA-7ma-edicion.md.
+  Detected: 2026-11-21. Do not assume a web-app, PHP, or Node stack from the thesis subject matter.
+
+strict_tdd: false
+
+projects:
+  - path: "."
+    stack: "Markdown/Obsidian vault; Python 3 stdlib verification script; .docx deliverables"
+    test_command: ""
+    framework: ""
+    test_layers:
+      unit: { available: false, tool: "" }
+      integration: { available: false, tool: "" }
+      e2e: { available: false, tool: "" }
+    coverage_command: ""
+    quality_tools:
+      linter: { available: false, command: "" }
+      type_checker: { available: false, command: "" }
+      formatter: { available: false, command: "" }
+    validation_commands:
+      - "python verificar_referencias.py"
+      - "python verificar_referencias.py --fix"
+
+testing:
+  strict_tdd: false
+  detected: "2026-11-21"
+  rationale: "Zero supported project markers and no explicit workspace-level test command; no-runner fallback applied."
+  workspace_test_command: ""
+  validation_only_commands:
+    - "python verificar_referencias.py"
+
+rules:
+  proposal:
+    - "Scope changes to documents, notes, or the Python verification script; do not assume an application codebase."
+    - "Identify the authoritative source document for each concept (SOLUCION.md section map) before proposing changes."
+  specs:
+    - "Use Given/When/Then for observable document or script behavior."
+    - "Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)."
+  design:
+    - "State which file owns each definition; avoid duplicating a concept across Markdown and .docx copies."
+    - "Document rollback steps for edits to bibliographic folders or thesis deliverables."
+  tasks:
+    - "Group by authoritative document and keep each review unit near or below 400 changed lines."
+  apply:
+    guidelines:
+      - "Preserve the neutral Spanish register of existing thesis prose; use English for new technical artifacts."
+      - "Run python verificar_referencias.py after edits touching citations or bibliographic folder names."
+      - "Do not regenerate .docx deliverables unless explicitly requested."
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: ""
+    validation_command: "python verificar_referencias.py"
+    build_command: ""
+    coverage_threshold: 0
+  archive:
+    - "Warn before merging destructive deltas to bibliographic folders or .docx files."
